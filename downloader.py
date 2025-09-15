@@ -44,7 +44,6 @@ def html_get_page(url: str, retry: int = MAX_RETRY, use_bypasser: bool = False) 
             response = requests.get(url, proxies=PROXIES)
             response.raise_for_status()
             logger.debug(f"Success getting: {url}")
-            time.sleep(1)
         return str(response.text)
         
     except Exception as e:

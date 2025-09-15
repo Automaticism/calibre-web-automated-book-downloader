@@ -21,7 +21,6 @@ from models import SearchFilters
 logger = setup_logger(__name__)
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app)  # type: ignore
-app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0  # Disable caching
 app.config['APPLICATION_ROOT'] = '/'
 
 # Flask logger

@@ -17,6 +17,9 @@ import book_manager
 
 logger = setup_logger(__name__)
 
+# Event to signal new books in the queue
+new_book_event = threading.Event()
+
 def _sanitize_filename(filename: str) -> str:
     """Sanitize a filename by replacing spaces with underscores and removing invalid characters."""
     keepcharacters = (' ','.','_')
@@ -67,9 +70,11 @@ def queue_book(book_id: str, priority: int = 0) -> bool:
     """
     try:
         book_info = book_manager.get_book_info(book_id)
-        book_queue.add(book_id, book_info, priority)
-        logger.info(f"Book queued with priority {priority}: {book_info.title}")
-        return True
+        if book_queue.add(book_id, book_info, priority):
+            logger.info(f"Book queued with priority {priority}: {book_info.title}")
+            new_book_event.set()  # Signal that a new book is available
+            return True
+        return False
     except Exception as e:
         logger.error_trace(f"Error queueing book: {e}")
         return False
@@ -316,8 +321,10 @@ def concurrent_download_loop() -> None:
                 future = executor.submit(_process_single_download, book_id, cancel_flag)
                 active_futures[future] = book_id
             
-            # Brief sleep to prevent busy waiting
-            time.sleep(MAIN_LOOP_SLEEP_TIME)
+            # Wait for new books to be added, with a timeout to periodically
+            # check for completed downloads even if the queue is empty.
+            new_book_event.wait(timeout=MAIN_LOOP_SLEEP_TIME)
+            new_book_event.clear()
 
 # Start concurrent download coordinator
 download_coordinator_thread = threading.Thread(

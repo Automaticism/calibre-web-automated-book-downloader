@@ -62,24 +62,28 @@ class BookQueue:
         self._cancel_flags: dict[str, Event] = {}  # Cancellation flags for active downloads
         self._active_downloads: dict[str, bool] = {}  # Track currently downloading books
     
-    def add(self, book_id: str, book_data: BookInfo, priority: int = 0) -> None:
+    def add(self, book_id: str, book_data: BookInfo, priority: int = 0) -> bool:
         """Add a book to the queue with specified priority.
         
         Args:
             book_id: Unique identifier for the book
             book_data: Book information
             priority: Priority level (lower number = higher priority)
+
+        Returns:
+            bool: True if book was added, False otherwise
         """
         with self._lock:
             # Don't add if already exists and not in error/done state
             if book_id in self._status and self._status[book_id] not in [QueueStatus.ERROR, QueueStatus.DONE, QueueStatus.CANCELLED]:
-                return
+                return False
                 
             book_data.priority = priority
             queue_item = QueueItem(book_id, priority, time.time())
             self._queue.put(queue_item)
             self._book_data[book_id] = book_data
             self._update_status(book_id, QueueStatus.QUEUED)
+            return True
     
     def get_next(self) -> Optional[Tuple[str, Event]]:
         """Get next book ID from queue with cancellation flag.
