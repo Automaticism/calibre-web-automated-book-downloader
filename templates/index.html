@@ -16,21 +16,21 @@
 </head>
 <body class="min-h-screen" style="background: var(--bg); color: var(--text);">
     <!-- Header -->
-    <header class="w-full border-b border-[color:var(--border-muted)]" style="background: var(--header-bg);">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+    <header class="w-full">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <img src="{{ url_for('static', filename='media/logo.png') }}" alt="Logo" class="h-8 w-8">
-                <h1 class="text-lg font-semibold">Book Search & Download</h1>
+                <img src="{{ url_for('static', filename='media/logo.png') }}" alt="Logo" class="h-10 w-10">
+                <h1 class="text-xl font-semibold">Book Search & Download</h1>
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-3">
                 {% if debug %}
                 <form action="/request/api/restart" method="get" id="restart-form">
-                    <button class="px-3 py-1 rounded bg-red-600 text-white text-sm" id="restart-button" type="submit">
+                    <button class="px-3 py-1.5 rounded-md bg-red-600 text-white text-sm font-medium hover:bg-red-700" id="restart-button" type="submit">
                         RESTART
                     </button>
                 </form>
                 <form action="/request/debug" method="get" id="debug-form">
-                    <button class="px-3 py-1 rounded bg-red-600/80 text-white text-sm" id="debug-button" type="submit">
+                    <button class="px-3 py-1.5 rounded-md bg-red-600/80 text-white text-sm font-medium hover:bg-red-700/80" id="debug-button" type="submit">
                         DEBUG
                     </button>
                 </form>
@@ -38,7 +38,8 @@
 
                 <!-- Theme Dropdown -->
                 <div class="relative">
-                    <button id="theme-toggle" class="px-3 py-1 rounded border text-sm" style="border-color: var(--border-muted);">
+                    <button id="theme-toggle" class="px-4 py-2 rounded-md border text-sm flex items-center gap-2" style="border-color: var(--border-muted);">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4"><path d="M10 3.5a1.5 1.5 0 011.5 1.5v.5h-3v-.5a1.5 1.5 0 011.5-1.5z" /><path fill-rule="evenodd" d="M10 2a2.5 2.5 0 00-2.5 2.5v.5h5v-.5A2.5 2.5 0 0010 2zM8.5 7a.5.5 0 00-1 0v4.5a.5.5 0 001 0V7zM11.5 7a.5.5 0 00-1 0v4.5a.5.5 0 001 0V7z" clip-rule="evenodd" /><path d="M2 9.5A3.5 3.5 0 015.5 6h9A3.5 3.5 0 0118 9.5V13a1 1 0 01-1 1H3a1 1 0 01-1-1V9.5z" /></svg>
                         <span id="theme-text">Theme</span>
                     </button>
                     <div id="theme-menu" class="absolute right-0 mt-2 w-36 rounded-md shadow-lg ring-1 ring-black/5 hidden" style="background: var(--bg-soft);">
@@ -53,45 +54,45 @@
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <!-- Hero / Search -->
-        <section class="mb-6">
-            <div class="flex flex-col gap-3">
-                <div class="flex gap-2">
+        <section class="mb-10 p-6 rounded-lg" style="background-color: var(--card-background);">
+            <div class="flex flex-col gap-4">
+                <div class="flex gap-3">
                     <input id="search-input" type="search" placeholder="Search by ISBN, title, author..." aria-label="Search books"
-                           class="flex-1 px-4 py-3 rounded-md border outline-none"
-                           style="background: var(--bg-soft); color: var(--text); border-color: var(--border-muted);">
-                    <button id="search-button" class="px-4 py-3 rounded-md text-white bg-blue-600 hover:bg-blue-700">
+                           class="flex-1 px-4 py-3 rounded-lg border outline-none text-base"
+                           style="background: var(--bg); color: var(--text); border-color: var(--border-muted);">
+                    <button id="search-button" class="px-6 py-3 rounded-lg text-white bg-blue-600 hover:bg-blue-700 font-semibold">
                         Search
                     </button>
                 </div>
                 <div>
-                    <button id="toggle-advanced" class="text-sm underline opacity-80 hover:opacity-100">Advanced Search</button>
+                    <button id="toggle-advanced" class="text-sm font-medium text-blue-600 hover:underline">Advanced Search</button>
                 </div>
                 <!-- Advanced Filters -->
-                <form id="search-filters" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 hidden">
+                <form id="search-filters" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-4 border-t border-[color:var(--border-muted)] hidden">
                     <div>
                         <label for="isbn-input" class="block text-sm mb-1 opacity-80">ISBN</label>
                         <input id="isbn-input" type="search" placeholder="ISBN"
                                class="w-full px-3 py-2 rounded-md border"
-                               style="background: var(--bg-soft); color: var(--text); border-color: var(--border-muted);">
+                               style="background: var(--bg); color: var(--text); border-color: var(--border-muted);">
                     </div>
                     <div>
                         <label for="author-input" class="block text-sm mb-1 opacity-80">Author</label>
                         <input id="author-input" type="search" placeholder="Author"
                                class="w-full px-3 py-2 rounded-md border"
-                               style="background: var(--bg-soft); color: var(--text); border-color: var(--border-muted);">
+                               style="background: var(--bg); color: var(--text); border-color: var(--border-muted);">
                     </div>
                     <div>
                         <label for="title-input" class="block text-sm mb-1 opacity-80">Title</label>
                         <input id="title-input" type="search" placeholder="Title"
                                class="w-full px-3 py-2 rounded-md border"
-                               style="background: var(--bg-soft); color: var(--text); border-color: var(--border-muted);">
+                               style="background: var(--bg); color: var(--text); border-color: var(--border-muted);">
                     </div>
                     <div>
                         <label for="lang-input" class="block text-sm mb-1 opacity-80">Language</label>
                         <select id="lang-input" class="w-full px-3 py-2 rounded-md border"
-                                style="background: var(--bg-soft); color: var(--text); border-color: var(--border-muted);">
+                                style="background: var(--bg); color: var(--text); border-color: var(--border-muted);">
                             <option value="all">All</option>
                             {% for lang in book_languages %}
                                 <option value="{{ lang.code }}" {% if lang.code == default_language[0] %}selected{% endif %}>
@@ -103,7 +104,7 @@
                     <div>
                         <label for="sort-input" class="block text-sm mb-1 opacity-80">Sort</label>
                         <select id="sort-input" class="w-full px-3 py-2 rounded-md border"
-                                style="background: var(--bg-soft); color: var(--text); border-color: var(--border-muted);">
+                                style="background: var(--bg); color: var(--text); border-color: var(--border-muted);">
                             <option value="">Most relevant</option>
                             <option value="newest">Newest (publication year)</option>
                             <option value="oldest">Oldest (publication year)</option>
@@ -116,7 +117,7 @@
                     <div>
                         <label for="content-input" class="block text sm mb-1 opacity-80">Content</label>
                         <select id="content-input" class="w-full px-3 py-2 rounded-md border"
-                                style="background: var(--bg-soft); color: var(--text); border-color: var(--border-muted);">
+                                style="background: var(--bg); color: var(--text); border-color: var(--border-muted);">
                             <option value="">All</option>
                             <option value="book_nonfiction">Book (non-fiction)</option>
                             <option value="book_fiction">Book (fiction)</option>
@@ -131,7 +132,7 @@
                     </div>
                     <div class="md:col-span-2 lg:col-span-3">
                         <label class="block text-sm mb-1 opacity-80">Formats</label>
-                        <div class="flex flex-wrap gap-3 text-sm">
+                        <div class="flex flex-wrap gap-x-4 gap-y-2 text-sm">
                             <label class="inline-flex items-center gap-2 {{ 'opacity-50 cursor-not-allowed' if 'pdf' not in supported_formats else '' }}">
                                 <input type="checkbox" id="format-pdf" value="pdf" {% if 'pdf' not in supported_formats %}disabled{% endif %}>
                                 PDF
@@ -175,24 +176,24 @@
         </section>
 
         <!-- Active Downloads (Top) -->
-        <section id="active-downloads-top" class="mb-6 hidden">
-            <div class="flex items-center justify-between mb-2">
-                <h2 class="text-lg font-semibold">Active Downloads</h2>
-                <button id="active-refresh-button" class="px-3 py-1 rounded border text-sm" style="border-color: var(--border-muted);">Refresh</button>
+        <section id="active-downloads-top" class="mb-10 hidden">
+            <div class="flex items-center justify-between mb-3">
+                <h2 class="text-xl font-semibold">Active Downloads</h2>
+                <button id="active-refresh-button" class="px-3 py-1.5 rounded-md border text-sm font-medium" style="border-color: var(--border-muted);">Refresh</button>
             </div>
-            <div id="active-downloads-list" class="space-y-2"></div>
+            <div id="active-downloads-list" class="space-y-3"></div>
         </section>
 
         <!-- Results -->
-        <section class="mb-8">
-            <div class="flex items-center justify-between mb-3">
-                <h2 class="text-xl font-semibold">Search Results</h2>
+        <section class="mb-10">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold">Search Results</h2>
                 <div id="search-loading" class="text-sm opacity-80 hidden">Loading…</div>
             </div>
-            <div id="results-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div id="results-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 <!-- Cards will be injected here -->
             </div>
-            <div id="no-results" class="mt-4 text-sm opacity-80 hidden">No results found.</div>
+            <div id="no-results" class="mt-6 text-center text-lg opacity-80 hidden" style="background-color: var(--card-background); padding: 2rem; border-radius: 0.5rem;">No results found.</div>
         </section>
 
         <!-- Modal -->
@@ -202,20 +203,20 @@
 
         <!-- Status -->
         <section>
-            <div class="flex items-center flex-wrap mb-3">
-                <h2 class="text-xl font-semibold mr-4 sm:mr-6">Download Queue & Status</h2>
-                <div class="flex items-center gap-3 ml-4 sm:ml-auto">
-                    <button id="refresh-status-button" class="px-3 py-1 rounded border text-sm" style="border-color: var(--border-muted);">Refresh</button>
-                    <button id="clear-completed-button" class="px-3 py-1 rounded border text-sm" style="border-color: var(--border-muted);">Clear Completed</button>
+            <div class="flex items-center flex-wrap gap-4 mb-4">
+                <h2 class="text-2xl font-bold">Download Queue & Status</h2>
+                <div class="flex items-center gap-3 ml-auto">
+                    <button id="refresh-status-button" class="px-3 py-1.5 rounded-md border text-sm font-medium" style="border-color: var(--border-muted);">Refresh</button>
+                    <button id="clear-completed-button" class="px-3 py-1.5 rounded-md border text-sm font-medium" style="border-color: var(--border-muted);">Clear Completed</button>
                     <span id="active-downloads-count" class="text-sm opacity-80">Active: 0</span>
                 </div>
             </div>
             <div id="status-loading" class="text-sm opacity-80 hidden">Loading…</div>
-            <div id="status-list" class="space-y-2"></div>
+            <div id="status-list" class="space-y-3"></div>
         </section>
     </main>
 
-    <footer class="mt-10 border-t pt-6 pb-10" style="border-color: var(--border-muted); background: var(--footer-bg);">
+    <footer class="mt-16 border-t py-8" style="border-color: var(--border-muted);">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
             <div>
                 <p class="text-sm opacity-80">Calibre Web Book Downloader</p>

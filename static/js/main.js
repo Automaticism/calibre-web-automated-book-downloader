@@ -94,16 +94,18 @@
 
   // ---- Cards ----
   function renderCard(book) {
-    const cover = book.preview ? `<img src="${utils.e(book.preview)}" alt="Cover" class="w-full h-88 object-cover rounded">` :
-      `<div class="w-full h-88 rounded flex items-center justify-center opacity-70" style="background: var(--bg-soft)">No Cover</div>`;
+    const cover = book.preview ? `<img src="${utils.e(book.preview)}" alt="Cover" class="w-full h-full object-cover">` :
+      `<div class="w-full h-full flex items-center justify-center opacity-70" style="background: var(--bg-soft)">No Cover</div>`;
 
     const html = `
-      <article class="rounded border p-3 flex flex-col gap-3" style="border-color: var(--border-muted); background: var(--bg-soft)">
-        ${cover}
-        <div class="flex-1 space-y-1">
-          <h3 class="font-semibold leading-tight">${utils.e(book.title) || 'Untitled'}</h3>
-          <p class="text-sm opacity-80">${utils.e(book.author) || 'Unknown author'}</p>
-          <div class="text-xs opacity-70 flex flex-wrap gap-2">
+      <article class="group relative flex flex-col rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300" style="background-color: var(--card-background);">
+        <div class="aspect-[4/5] overflow-hidden">
+          ${cover}
+        </div>
+        <div class="p-4 flex-1 flex flex-col">
+          <h3 class="font-bold text-lg leading-tight flex-1">${utils.e(book.title) || 'Untitled'}</h3>
+          <p class="text-sm opacity-80 mt-1">${utils.e(book.author) || 'Unknown author'}</p>
+          <div class="text-xs opacity-70 mt-2 flex flex-wrap gap-x-2">
             <span>${utils.e(book.year) || '-'}</span>
             <span>•</span>
             <span>${utils.e(book.language) || '-'}</span>
@@ -112,9 +114,9 @@
             ${book.size ? `<span>•</span><span>${utils.e(book.size)}</span>` : ''}
           </div>
         </div>
-        <div class="flex gap-2">
-          <button class="px-3 py-2 rounded border text-sm flex-1" data-action="details" data-id="${utils.e(book.id)}" style="border-color: var(--border-muted);">Details</button>
-          <button class="px-3 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white text-sm flex-1" data-action="download" data-id="${utils.e(book.id)}">Download</button>
+        <div class="p-4 pt-0 flex gap-3">
+          <button class="px-4 py-2 rounded-md border text-sm font-semibold flex-1" data-action="details" data-id="${utils.e(book.id)}" style="border-color: var(--border-muted);">Details</button>
+          <button class="px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold flex-1" data-action="download" data-id="${utils.e(book.id)}">Download</button>
         </div>
       </article>`;
 
@@ -172,17 +174,22 @@
       }
     },
     tpl(book) {
-      const cover = book.preview ? `<img src="${utils.e(book.preview)}" alt="Cover" class="w-full h-88 object-cover rounded">` : '';
-      const infoList = book.info ? Object.entries(book.info).map(([k, v]) => `<li><strong>${utils.e(k)}:</strong> ${utils.e((v||[]).join 
-        ? v.join(', ') : v)}</li>`).join('') : '';
+      const cover = book.preview ? `<img src="${utils.e(book.preview)}" alt="Cover" class="w-full object-cover rounded-lg shadow-md">` : '';
+      const infoList = book.info ? Object.entries(book.info).map(([k, v]) => `<li class="flex flex-col"><span class="font-semibold">${utils.e(k)}</span> <span class="opacity-80">${utils.e((v||[]).join ? v.join(', ') : v)}</span></li>`).join('') : '';
+
       return `
-        <div class="p-4 space-y-4">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>${cover}</div>
-            <div>
-              <h3 class="text-lg font-semibold mb-1">${utils.e(book.title) || 'Untitled'}</h3>
-              <p class="text-sm opacity-80">${utils.e(book.author) || 'Unknown author'}</p>
-              <div class="text-sm mt-2 space-y-1">
+        <div class="p-6 space-y-6 relative">
+          <button id="close-details" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="md:col-span-1">${cover}</div>
+            <div class="md:col-span-2 space-y-4">
+              <div>
+                <h2 class="text-3xl font-bold">${utils.e(book.title) || 'Untitled'}</h2>
+                <p class="text-lg opacity-80">${utils.e(book.author) || 'Unknown author'}</p>
+              </div>
+              <div class="text-sm space-y-2 pt-4 border-t border-[color:var(--border-muted)]">
                 <p><strong>Publisher:</strong> ${utils.e(book.publisher) || '-'}</p>
                 <p><strong>Year:</strong> ${utils.e(book.year) || '-'}</p>
                 <p><strong>Language:</strong> ${utils.e(book.language) || '-'}</p>
@@ -191,21 +198,24 @@
               </div>
             </div>
           </div>
-          ${infoList ? `<div><h4 class="font-semibold mb-2">Further Information</h4><ul class="list-disc pl-6 space-y-1 text-sm">${infoList}</ul></div>` : ''}
-          <div class="flex gap-2">
-            <button id="download-button" class="px-3 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white text-sm">Download</button>
-            <button id="close-details" class="px-3 py-2 rounded border text-sm" style="border-color: var(--border-muted);">Close</button>
+          ${infoList ? `<div class="pt-4 border-t border-[color:var(--border-muted)]"><h4 class="text-xl font-semibold mb-3">Further Information</h4><ul class="space-y-2 text-sm">${infoList}</ul></div>` : ''}
+          <div class="flex gap-4 pt-4 border-t border-[color:var(--border-muted)]">
+            <button id="download-button" class="px-6 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold flex-1">Download</button>
           </div>
         </div>`;
     },
     async download(book) {
       if (!book) return;
-      try {
-        await utils.j(`${API.download}?id=${encodeURIComponent(book.id)}`);
-        utils.toast('Queued for download');
-        modal.close();
-        status.fetch();
-      } catch (_){}
+      utils.j(`${API.download}?id=${encodeURIComponent(book.id)}`)
+        .then(() => {
+          utils.toast('Queued for download');
+          modal.close();
+          status.fetch();
+        })
+        .catch(err => {
+          console.error('Download error:', err);
+          utils.toast('Failed to queue download.');
+        });
     }
   };
 
@@ -224,83 +234,99 @@
       } finally { utils.hide(el.statusLoading); }
     },
     render(data) {
-      // data shape: {queued: {...}, downloading: {...}, completed: {...}, error: {...}}
+      const statusMap = {
+        queued: { icon: 'M8 12h.01M12 12h.01M16 12h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z', color: 'yellow' },
+        downloading: { icon: 'M4 16v1h16v-1l-2-6-4 4-4-4-2 6zM4 4h16v1H4z', color: 'blue' },
+        completed: { icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z', color: 'green' },
+        error: { icon: 'M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z', color: 'red' },
+      };
+
       const sections = [];
       for (const [name, items] of Object.entries(data || {})) {
         if (!items || Object.keys(items).length === 0) continue;
+
         const rows = Object.values(items).map((b) => {
+          const s = statusMap[name] || { icon: '', color: 'gray' };
           const actions = (name === 'queued' || name === 'downloading')
-            ? `<button class="px-2 py-1 rounded border text-xs" data-cancel="${utils.e(b.id)}" style="border-color: var(--border-muted);">Cancel</button>`
+            ? `<button class="px-3 py-1 rounded-md border text-xs font-semibold" data-cancel="${utils.e(b.id)}" style="border-color: var(--border-muted);">Cancel</button>`
             : '';
           const progress = (name === 'downloading' && typeof b.progress === 'number')
-            ? `<div class="h-2 bg-black/10 rounded overflow-hidden"><div class="h-2 bg-blue-600" style="width:${Math.round(b.progress)}%"></div></div>`
+            ? `<div class="h-2 rounded overflow-hidden" style="background-color: var(--bg);"><div class="h-2 bg-${s.color}-500" style="width:${Math.round(b.progress)}%"></div></div>`
             : '';
-          return `<li class="p-3 rounded border flex flex-col gap-2" style="border-color: var(--border-muted); background: var(--bg-soft)">
-            <div class="text-sm"><span class="opacity-70">${utils.e(name)}</span> • <strong>${utils.e(b.title || '-') }</strong></div>
-            ${progress}
-            <div class="flex items-center gap-2">${actions}</div>
-          </li>`;
+
+          return `
+            <li class="p-4 rounded-lg flex flex-col gap-3" style="background-color: var(--card-background);">
+              <div class="flex items-center gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-${s.color}-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${s.icon}" /></svg>
+                <div class="flex-1">
+                  <p class="font-semibold">${utils.e(b.title || '-')}</p>
+                  <p class="text-sm opacity-70">${name.charAt(0).toUpperCase() + name.slice(1)}</p>
+                </div>
+                <div class="shrink-0">${actions}</div>
+              </div>
+              ${progress}
+            </li>`;
         }).join('');
+
         sections.push(`
           <div>
-            <h4 class="font-semibold mb-2">${name.charAt(0).toUpperCase() + name.slice(1)}</h4>
-            <ul class="space-y-2">${rows}</ul>
+            <h3 class="text-lg font-semibold mb-3">${name.charAt(0).toUpperCase() + name.slice(1)}</h3>
+            <ul class="space-y-3">${rows}</ul>
           </div>`);
       }
-      el.statusList.innerHTML = sections.join('') || '<div class="text-sm opacity-80">No items.</div>';
-      // Bind cancel buttons
-      el.statusList.querySelectorAll('[data-cancel]')?.forEach((btn) => {
+
+      el.statusList.innerHTML = sections.join('') || '<div class="text-center p-6 rounded-lg" style="background-color: var(--card-background);">No items in queue.</div>';
+      el.statusList.querySelectorAll('[data-cancel]')?.forEach(btn => {
         btn.addEventListener('click', () => queue.cancel(btn.getAttribute('data-cancel')));
       });
     },
-    // Render compact active downloads list near the search bar
     renderTop(data) {
-      try {
-        const downloading = (data && data.downloading) ? Object.values(data.downloading) : [];
-        if (!el.activeTopSec || !el.activeTopList) return;
-        if (!downloading.length) {
-          el.activeTopList.innerHTML = '';
-          el.activeTopSec.classList.add('hidden');
-          return;
-        }
-        // Build compact rows with title and progress bar + cancel
-        const rows = downloading.map((b) => {
-          const prog = (typeof b.progress === 'number')
-            ? `<div class="h-1.5 bg-black/10 rounded overflow-hidden"><div class="h-1.5 bg-blue-600" style="width:${Math.round(b.progress)}%"></div></div>`
-            : '';
-          const cancel = `<button class="px-2 py-0.5 rounded border text-xs" data-cancel="${utils.e(b.id)}" style="border-color: var(--border-muted);">Cancel</button>`;
-          return `<div class="p-3 rounded border" style="border-color: var(--border-muted); background: var(--bg-soft)">
-            <div class="flex items-center justify-between gap-3">
-              <div class="text-sm truncate"><strong>${utils.e(b.title || '-') }</strong></div>
+      const downloading = (data && data.downloading) ? Object.values(data.downloading) : [];
+      if (!el.activeTopSec || !el.activeTopList) return;
+      if (!downloading.length) {
+        el.activeTopList.innerHTML = '';
+        utils.hide(el.activeTopSec);
+        return;
+      }
+
+      const rows = downloading.map((b) => {
+        const prog = (typeof b.progress === 'number') ? `<div class="h-1.5 bg-blue-500" style="width:${Math.round(b.progress)}%"></div>` : '';
+        const cancel = `<button class="px-2 py-1 rounded-md border text-xs font-semibold" data-cancel="${utils.e(b.id)}" style="border-color: var(--border-muted);">Cancel</button>`;
+        return `
+          <div class="p-3 rounded-lg" style="background-color: var(--card-background);">
+            <div class="flex items-center justify-between gap-3 mb-2">
+              <p class="text-sm font-semibold truncate">${utils.e(b.title || '-')}</p>
               <div class="shrink-0">${cancel}</div>
             </div>
-            ${prog}
+            <div class="h-1.5 rounded overflow-hidden" style="background-color: var(--bg);">${prog}</div>
           </div>`;
-        }).join('');
-        el.activeTopList.innerHTML = rows;
-        el.activeTopSec.classList.remove('hidden');
-        // Bind cancel handlers for the top section
-        el.activeTopList.querySelectorAll('[data-cancel]')?.forEach((btn) => {
-          btn.addEventListener('click', () => queue.cancel(btn.getAttribute('data-cancel')));
-        });
-      } catch (_) {}
+      }).join('');
+
+      el.activeTopList.innerHTML = rows;
+      utils.show(el.activeTopSec);
+      el.activeTopList.querySelectorAll('[data-cancel]')?.forEach(btn => {
+        btn.addEventListener('click', () => queue.cancel(btn.getAttribute('data-cancel')));
+      });
     },
     async updateActive() {
-      try {
-        const d = await utils.j(API.activeDownloads);
-        const n = Array.isArray(d.active_downloads) ? d.active_downloads.length : 0;
-        if (el.activeDownloadsCount) el.activeDownloadsCount.textContent = `Active: ${n}`;
-      } catch (_) {}
+      utils.j(API.activeDownloads)
+        .then(d => {
+          const n = Array.isArray(d.active_downloads) ? d.active_downloads.length : 0;
+          if (el.activeDownloadsCount) el.activeDownloadsCount.textContent = `Active: ${n}`;
+        })
+        .catch(err => console.error('Failed to update active downloads count:', err));
     }
   };
 
   // ---- Queue ----
   const queue = {
     async cancel(id) {
-      try {
-        await fetch(`${API.cancelDownload}/${encodeURIComponent(id)}/cancel`, { method: 'DELETE' });
-        status.fetch();
-      } catch (_){}
+      fetch(`${API.cancelDownload}/${encodeURIComponent(id)}/cancel`, { method: 'DELETE' })
+        .then(() => status.fetch())
+        .catch(err => {
+          console.error('Cancel download error:', err);
+          utils.toast('Failed to cancel download.');
+        });
     }
   };
 
